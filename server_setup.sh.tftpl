@@ -1,0 +1,140 @@
+#!/bin/bash
+
+# Update package lists
+sudo apt update
+# Pre-installed on Amazon Linux 2023
+#sudo apt install -y java-17-amazon-corretto-headless
+#sudo apt install -y awscli
+sudo apt install -y jq
+
+# Change directory to the server folder and setup a minecraft user
+adduser minecraft
+mkdir /opt/minecraft/
+mkdir /opt/minecraft/server/
+cd /opt/minecraft/server
+chown -R minecraft:minecraft /opt/minecraft/
+
+# Copy the saves from s3
+mkdir /opt/minecraft/server/worlds
+aws s3 sync s3://${save_bucket_full_path} /opt/minecraft/server/worlds --region ${region}
+
+# Download the latest version of the Minecraft server files
+VERSION_MANIFEST_URL="https://launchermeta.mojang.com/mc/game/version_manifest.json"
+MANIFEST_JSON=$(curl -s $VERSION_MANIFEST_URL)
+
+# Extracting the URL for the latest release version or target version if specified
+if [ -z ${minecraft_version} ]; then
+    TARGET_RELEASE=$(echo $MANIFEST_JSON | jq -r '.latest.release')
+else
+    TARGET_RELEASE=$minecraft_version
+fi
+
+# Finding the URL for the latest release version
+URL=$(echo $MANIFEST_JSON | jq -r --arg TARGET_RELEASE "$TARGET_RELEASE" '.versions[] | select(.id == $TARGET_RELEASE) | .url')
+
+# Fetching the JSON for the latest release version
+VERSION_JSON=$(curl -s $URL)
+
+# Extracting the URL for the latest server.jar
+SERVER_JAR_URL=$(echo $VERSION_JSON | jq -r '.downloads.server.url')
+
+# Downloading the latest server.jar
+echo "Downloading the latest server.jar from: $SERVER_JAR_URL"
+curl -o minecraft_server_$TARGET_RELEASE.jar $SERVER_JAR_URL
+
+# Make the server executable
+chmod +x minecraft_server_$TARGET_RELEASE.jar
+
+# Accept the EULA
+echo "eula=true" > eula.txt
+
+# Create the server.properties file
+echo """
+enable-jmx-monitoring=false
+rcon.port=25575
+level-seed=${custom_seed}
+gamemode=${game_mode}
+enable-command-block=${enable_command_block}
+enable-query=false
+generator-settings={}
+enforce-secure-profile=true
+level-name=${level_name}
+motd=${name}
+query.port=${server_port}
+pvp=${pvp}
+generate-structures=${generate_structures}
+max-chained-neighbor-updates=1000000
+difficulty=${difficulty}
+network-compression-threshold=256
+max-tick-time=60000
+require-resource-pack=false
+use-native-transport=true
+max-players=${max_players}
+online-mode=true
+enable-status=true
+allow-flight=${allow_flight}
+initial-disabled-packs=
+broadcast-rcon-to-ops=true
+view-distance=${view_distance}
+server-ip=
+resource-pack-prompt=
+allow-nether=${allow_nether}
+server-port=${server_port}
+enable-rcon=false
+sync-chunk-writes=true
+op-permission-level=4
+prevent-proxy-connections=false
+hide-online-players=false
+resource-pack=${resource_pack}
+entity-broadcast-range-percentage=100
+simulation-distance=${simulation_distance}
+rcon.password=
+player-idle-timeout=${player_idle_timeout}
+force-gamemode=${force_gamemode}
+rate-limit=0
+hardcore=${hardcore}
+white-list=${whitelist_enabled}
+broadcast-console-to-ops=true
+spawn-npcs=${spawn_npcs}
+spawn-animals=${spawn_animals}
+log-ips=true
+function-permission-level=2
+initial-enabled-packs=vanilla
+level-type=${level_type}
+text-filtering-config=
+spawn-monsters=${spawn_monsters}
+enforce-whitelist=${whitelist_enabled}
+spawn-protection=16
+resource-pack-sha1=
+max-world-size=${max_world_size}
+""" > server.properties
+
+# Create whitelist.json file
+echo "[" > whitelist.json
+for uuid in "!${whitelisted_users}[@]"; do
+    name="${whitelisted_users}[$uuid]"
+    echo "  {" >> whitelist.json
+    echo "    \"uuid\": \"$uuid\"," >> whitelist.json
+    echo "    \"name\": \"$name\"" >> whitelist.json
+    echo "  }," >> whitelist.json
+done
+sed -i '$ s/,$//' whitelist.json
+echo "]" >> whitelist.json
+
+# Create SystemD Script to run Minecraft server jar on reboot and start the server
+echo '#!/bin/bash\njava -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui\n' > start
+chmod +x start
+echo '#!/bin/bash\nkill -9 $(ps -ef | pgrep -f "java")' > stop
+chmod +x stop
+cd /etc/systemd/system/
+echo '[Unit]\nDescription=Minecraft Server on start up\nWants=network-online.target\n[Service]\nUser=minecraft\nWorkingDirectory=/opt/minecraft/server\nExecStart=/opt/minecraft/server/start\nStandardInput=null\n[Install]\nWantedBy=multi-user.target' > minecraft.service
+sudo systemctl daemon-reload
+sudo systemctl enable minecraft.service
+sudo systemctl start minecraft.service
+
+# Setup shutdown hook to save the world to s3 before shutting down
+echo '#!/bin/bash\nsudo systemctl stop minecraft.service\n' > shutdown_script.sh
+echo 'aws s3 cp /opt/minecraft/server/worlds s3://${save_bucket_full_path} --recursive --region ${region}\n' >> shutdown_script.sh
+sudo cp shutdown_script.sh /etc/init.d/
+sudo chmod +x /etc/init.d/shutdown_script.sh
+sudo ln -s /etc/init.d/shutdown_script.sh /etc/rc0.d/K01shutdown_script.sh
