@@ -149,11 +149,24 @@ sudo cp shutdown_script.sh /etc/init.d/
 sudo chmod +x /etc/init.d/shutdown_script.sh
 sudo ln -s /etc/init.d/shutdown_script.sh /etc/rc0.d/K01shutdown_script.sh
 
-# Add cron job to execute backup every half hour
+# Setup backup script to run every 30 minutes
 echo """
 #!/bin/bash
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > backup_script.sh
-sudo cp backup_script.sh /etc/init.d/
-sudo chmod +x /etc/init.d/shutdown_script.sh
-(crontab -l ; echo "*/30 * * * * /etc/init.d/backup_script.sh") | crontab -
+sudo cp backup_script.sh /opt/minecraft/server/
+sudo chmod +x /opt/minecraft/server/backup_script.sh
+echo '''
+[Unit]
+Description=Minecraft Server Backup Timer
+[Timer]
+OnCalendar=*:0/30
+[Install]
+WantedBy=timers.target
+[Service]
+ExecStart=/bin/bash /opt/minecraft/server/backup_script.sh
+''' > minecraft-backup.timer
+sudo cp minecraft-backup.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable minecraft-backup.timer
+sudo systemctl start minecraft-backup.timer
