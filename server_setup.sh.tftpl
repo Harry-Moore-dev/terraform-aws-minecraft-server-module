@@ -149,7 +149,7 @@ Description=Shutdown Service
 Before=shutdown.target reboot.target halt.target
 Requires=network-online.target network.target
 [Service]
-KillMode=none
+KillMode=mixed
 ExecStart=/bin/true
 ExecStop=/path/to/script/shutdown_script.sh
 RemainAfterExit=yes
