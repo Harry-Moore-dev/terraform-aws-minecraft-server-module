@@ -110,19 +110,10 @@ max-world-size=${max_world_size}
 """ > server.properties
 
 # Create whitelist.json file
-echo "[" > whitelist.json
-for uuid in "!${whitelisted_users}[@]"; do
-    name="${whitelisted_users}[$uuid]"
-    echo "  {" >> whitelist.json
-    echo "    \"uuid\": \"$uuid\"," >> whitelist.json
-    echo "    \"name\": \"$name\"" >> whitelist.json
-    echo "  }," >> whitelist.json
-done
-sed -i '$ s/,$//' whitelist.json
-echo "]" >> whitelist.json
+echo "${whitelisted_users}" > whitelist.json
 
 # Create SystemD Script to run Minecraft server jar on reboot and start the server
-echo '#!/bin/bash\njava -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui\n' > start
+echo "#!/bin/bash\njava -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui\n" > start
 chmod +x start
 echo '#!/bin/bash\nkill -9 $(ps -ef | pgrep -f "java")' > stop
 chmod +x stop

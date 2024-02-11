@@ -84,9 +84,12 @@ variable "mc_allocated_memory" {
 }
 
 variable "mc_whitelisted_users" {
-  type        = map(string)
+  type = list(object({
+    uuid = string
+    name = string
+  }))
   description = "A map of whitelisted users where the key is the UUID and the value is the username"
-  default     = {}
+  default     = []
 }
 
 variable "mc_whitelist_enabled" {
