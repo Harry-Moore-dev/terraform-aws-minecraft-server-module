@@ -58,7 +58,7 @@ variable "s3_save_bucket_name" {
 variable "s3_save_bucket_path" {
   type        = string
   description = "The S3 bucket path to save the Minecraft server data"
-  default     = "worlds/"
+  default     = "world"
 }
 
 variable "s3_save_bucket_versioning" {

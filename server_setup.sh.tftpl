@@ -1,11 +1,8 @@
 #!/bin/bash
 
 # Update package lists
-sudo apt update
-# Pre-installed on Amazon Linux 2023
-#sudo apt install -y java-17-amazon-corretto-headless
-#sudo apt install -y awscli
-sudo apt install -y jq
+sudo yum update
+sudo yum install -y java-17-amazon-corretto-headless
 
 # Change directory to the server folder and setup a minecraft user
 adduser minecraft
@@ -15,8 +12,8 @@ cd /opt/minecraft/server
 chown -R minecraft:minecraft /opt/minecraft/
 
 # Copy the saves from s3
-mkdir /opt/minecraft/server/worlds
-aws s3 sync s3://${save_bucket_full_path} /opt/minecraft/server/worlds --region ${region}
+mkdir /opt/minecraft/server/${level_name}
+aws s3 sync s3://${save_bucket_full_path} /opt/minecraft/server/${level_name} --region ${region}
 
 # Download the latest version of the Minecraft server files
 VERSION_MANIFEST_URL="https://launchermeta.mojang.com/mc/game/version_manifest.json"
@@ -131,7 +128,7 @@ Wants=network-online.target
 [Service]
 User=minecraft
 WorkingDirectory=/opt/minecraft/server
-ExecStart=/opt/minecraft/server/start
+ExecStart=/bin/bash /opt/minecraft/server/start
 StandardInput=null
 [Install]
 WantedBy=multi-user.target
@@ -145,7 +142,7 @@ echo '''
 #!/bin/bash
 sudo systemctl stop minecraft.service
 ''' > backup_script.sh
-echo "aws s3 cp /opt/minecraft/server/worlds s3://${save_bucket_full_path} --recursive --region ${region}" >> backup_script.sh
+echo "aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}" >> backup_script.sh
 sudo cp backup_script.sh /etc/init.d/
 sudo chmod +x /etc/init.d/backup_script.sh
 sudo ln -s /etc/init.d/backup_script.sh /etc/rc0.d/K01backup_script.sh

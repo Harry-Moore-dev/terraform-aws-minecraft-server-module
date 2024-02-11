@@ -116,7 +116,7 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_minecraft_version"></a> [minecraft\_version](#input\_minecraft\_version) | The version of Minecraft Java edition to install, if not specified the latest version will be installed | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region | `string` | `"eu-west-2"` | no |
 | <a name="input_s3_save_bucket_name"></a> [s3\_save\_bucket\_name](#input\_s3\_save\_bucket\_name) | The S3 bucket name to save the Minecraft server data | `string` | n/a | yes |
-| <a name="input_s3_save_bucket_path"></a> [s3\_save\_bucket\_path](#input\_s3\_save\_bucket\_path) | The S3 bucket path to save the Minecraft server data | `string` | `"worlds/"` | no |
+| <a name="input_s3_save_bucket_path"></a> [s3\_save\_bucket\_path](#input\_s3\_save\_bucket\_path) | The S3 bucket path to save the Minecraft server data | `string` | `"world"` | no |
 | <a name="input_s3_save_bucket_versioning"></a> [s3\_save\_bucket\_versioning](#input\_s3\_save\_bucket\_versioning) | Whether to enable versioning on the S3 bucket on first creation | `string` | `"Enabled"` | no |
 | <a name="input_server_port"></a> [server\_port](#input\_server\_port) | The port the server will run on | `number` | `25565` | no |
 | <a name="input_vpc_subnet_cidr_block"></a> [vpc\_subnet\_cidr\_block](#input\_vpc\_subnet\_cidr\_block) | value of the vpc cidr block for the public subnet | `string` | `"172.31.0.0/16"` | no |
