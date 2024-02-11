@@ -164,7 +164,7 @@ echo """
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > /opt/minecraft/server/backup_script.sh
 sudo chmod +x /opt/minecraft/server/backup_script.sh
-echo "*/30 * * * * root /opt/minecraft/server/backup_script.sh" > /etc/cron.d/minecraft-backup
+echo "*/30 * * * * root /opt/minecraft/server/backup_script.sh" > /etc/cron.daily/minecraft-backup
 
 # Start services
 sudo systemctl daemon-reload

@@ -68,12 +68,15 @@ brew install pre-commit terraform-docs tflint tfsec
 
 | Name | Type |
 |------|------|
+| [aws_cloudwatch_event_rule.save_world_on_shutdown](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_target.save_world_on_shutdown](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/cloudwatch_event_target) | resource |
 | [aws_default_vpc.default](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/default_vpc) | resource |
 | [aws_iam_instance_profile.ssm_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_policy.s3_write_policy](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_policy) | resource |
 | [aws_iam_role.ssm_role](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.s3_write_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.ssm_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_ssm_document.save_world_on_shutdown](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/ssm_document) | resource |
 | [aws_subnet.public_subnet](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/subnet) | resource |
 | [null_resource.create_s3_bucket_if_doesnt_exist](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/data-sources/availability_zones) | data source |

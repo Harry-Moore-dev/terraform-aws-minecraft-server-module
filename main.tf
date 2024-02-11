@@ -110,6 +110,48 @@ resource "aws_iam_role" "ssm_role" {
 EOF
 }
 
+resource "aws_ssm_document" "save_world_on_shutdown" {
+  name          = "save_world_on_shutdown"
+  document_type = "Command"
+  content       = <<-EOT
+{
+  "schemaVersion": "2.2",
+  "description": "Save the world on shutdown",
+  "mainSteps": [
+    {
+      "action": "aws:runShellScript",
+      "name": "save_world",
+      "inputs": {
+        "runCommand": [
+          "systemctl stop minecraft.service",
+          "aws s3 cp /opt/minecraft/server/${var.mc_level_name} s3://${var.s3_save_bucket_name}/${var.s3_save_bucket_path} --recursive --region ${var.region}"
+        ]
+      }
+    }
+  ]
+}
+EOT
+}
+
+resource "aws_cloudwatch_event_rule" "save_world_on_shutdown" {
+  name        = "save_world_on_shutdown"
+  description = "Save the world on shutdown"
+  event_pattern = jsonencode({
+    source = ["aws.ec2"],
+    detail = {
+      "state" : ["shutting-down"],
+      "instance-id" : [module.ec2.id]
+    },
+    detail_type = ["EC2 Instance State-change Notification"]
+  })
+}
+
+resource "aws_cloudwatch_event_target" "save_world_on_shutdown" {
+  rule      = aws_cloudwatch_event_rule.save_world_on_shutdown.name
+  target_id = "save_world_on_shutdown"
+  arn       = aws_ssm_document.save_world_on_shutdown.arn
+}
+
 # Note this will create an s3 bucket on first deployment that is not managed inside of state, this will need to be destroyed manually if required or the name is changed
 resource "null_resource" "create_s3_bucket_if_doesnt_exist" {
   provisioner "local-exec" {
