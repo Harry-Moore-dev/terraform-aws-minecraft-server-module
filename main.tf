@@ -114,9 +114,9 @@ EOF
 resource "null_resource" "create_s3_bucket_if_doesnt_exist" {
   provisioner "local-exec" {
     command = <<-EOT
-      if ! aws s3api head-bucket --bucket ${var.s3_save_bucket_name} 2>/dev/null; then
-        aws s3api create-bucket --bucket ${var.s3_save_bucket_name} --acl private
-        aws s3api put-bucket-versioning --bucket ${var.s3_save_bucket_name} --versioning-configuration Status=${var.s3_save_bucket_versioning}
+      if ! aws s3api head-bucket --bucket ${var.s3_save_bucket_name} --region ${var.region} 2>/dev/null; then
+        aws s3api create-bucket --bucket ${var.s3_save_bucket_name} --acl private --region ${var.region} --create-bucket-configuration LocationConstraint=${var.region}
+        aws s3api put-bucket-versioning --bucket ${var.s3_save_bucket_name} --versioning-configuration Status=${var.s3_save_bucket_versioning} --region ${var.region}
       fi
     EOT
   }
