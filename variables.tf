@@ -7,7 +7,7 @@ variable "region" {
 variable "ec2_instance_type" {
   type        = string
   description = "ec2 instance type"
-  default     = "t3.small"
+  default     = "t3.large"
 }
 
 variable "ec2_architecture" {
@@ -23,7 +23,7 @@ variable "ec2_architecture" {
 variable "ec2_ebs_volume_size" {
   type        = number
   description = "ec2 ebs volume size"
-  default     = 8
+  default     = 15
 }
 
 variable "ec2_spot_instance_price" {
