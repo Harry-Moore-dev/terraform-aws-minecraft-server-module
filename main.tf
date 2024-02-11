@@ -26,7 +26,7 @@ module "ec2" {
 
   name = local.name
 
-  ami                         = data.aws_ssm_parameter.latest_ami.value
+  ami                         = data.aws_ssm_parameter.latest_ami.insecure_value
   instance_type               = var.ec2_instance_type
   subnet_id                   = aws_subnet.public_subnet.id
   availability_zone           = element(local.azs, 2)
