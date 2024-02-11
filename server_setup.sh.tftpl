@@ -9,7 +9,6 @@ adduser minecraft
 mkdir /opt/minecraft/
 mkdir /opt/minecraft/server/
 cd /opt/minecraft/server
-chown -R minecraft:minecraft /opt/minecraft/
 
 # Copy the saves from s3
 mkdir /opt/minecraft/server/${level_name}
@@ -106,6 +105,9 @@ resource-pack-sha1=
 max-world-size=${max_world_size}
 """ > server.properties
 
+# Allow the minecraft user to own the server files
+chown -R minecraft:minecraft /opt/minecraft/
+
 # Create whitelist.json file
 echo "${whitelisted_users}" > whitelist.json
 
@@ -138,14 +140,20 @@ sudo systemctl enable minecraft.service
 sudo systemctl start minecraft.service
 
 # Setup shutdown hook to save the world to s3 before shutting down
-echo '''
+echo """
 #!/bin/bash
-sudo systemctl stop minecraft.service
-''' > backup_script.sh
-echo "aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}" >> backup_script.sh
-sudo cp backup_script.sh /etc/init.d/
-sudo chmod +x /etc/init.d/backup_script.sh
-sudo ln -s /etc/init.d/backup_script.sh /etc/rc0.d/K01backup_script.sh
+systemctl stop minecraft.service
+aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
+""" > shutdown_script.sh
+sudo cp shutdown_script.sh /etc/init.d/
+sudo chmod +x /etc/init.d/shutdown_script.sh
+sudo ln -s /etc/init.d/shutdown_script.sh /etc/rc0.d/K01shutdown_script.sh
 
-# Add cron job to execute backup_script.sh every half hour
+# Add cron job to execute backup every half hour
+echo """
+#!/bin/bash
+aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
+""" > backup_script.sh
+sudo cp shutdown_script.sh /etc/init.d/
+sudo chmod +x /etc/init.d/shutdown_script.sh
 (crontab -l ; echo "*/30 * * * * /etc/init.d/backup_script.sh") | crontab -

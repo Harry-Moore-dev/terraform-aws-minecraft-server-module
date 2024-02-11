@@ -142,7 +142,7 @@ resource "aws_iam_policy" "s3_write_policy" {
         Sid      = "S3ReadAccess"
         Effect   = "Allow"
         Action   = ["s3:GetObject", "s3:PutObject"]
-        Resource = ["arn:aws:s3:::${var.s3_save_bucket_path}/*"]
+        Resource = ["arn:aws:s3:::${var.s3_save_bucket_name}/*"]
       },
       {
         Sid      = "S3ListBucketAccess"
