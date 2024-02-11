@@ -122,7 +122,7 @@ resource "aws_ssm_document" "save_world_on_shutdown" {
       "action": "aws:runShellScript",
       "name": "save_world",
       "inputs": {
-        "commands": [
+        "runCommand": [
           "systemctl stop minecraft.service",
           "aws s3 cp /opt/minecraft/server/${var.mc_level_name} s3://${var.s3_save_bucket_name}/${var.s3_save_bucket_path} --recursive --region ${var.region}"
         ]
@@ -149,7 +149,7 @@ resource "aws_cloudwatch_event_rule" "save_world_on_shutdown" {
 resource "aws_cloudwatch_event_target" "save_world_on_shutdown" {
   rule      = aws_cloudwatch_event_rule.save_world_on_shutdown.name
   target_id = "save_world_on_shutdown"
-  arn       = aws_ssm_document.save_world_on_shutdown.arn
+  arn       = replace(aws_ssm_document.save_world_on_shutdown.arn, "document/", "automation-definition/")
 }
 
 # Note this will create an s3 bucket on first deployment that is not managed inside of state, this will need to be destroyed manually if required or the name is changed
