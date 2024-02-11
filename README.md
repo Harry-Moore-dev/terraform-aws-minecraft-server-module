@@ -47,7 +47,7 @@ brew install pre-commit terraform-docs tflint tfsec
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.32.1 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 5.36.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.2 |
 
 ## Providers
@@ -68,23 +68,24 @@ brew install pre-commit terraform-docs tflint tfsec
 
 | Name | Type |
 |------|------|
-| [aws_default_vpc.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_vpc) | resource |
-| [aws_iam_instance_profile.ssm_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
-| [aws_iam_policy.s3_write_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_role.ssm_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy_attachment.s3_write_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.ssm_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_subnet.public_subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_default_vpc.default](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/default_vpc) | resource |
+| [aws_iam_instance_profile.ssm_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_instance_profile) | resource |
+| [aws_iam_policy.s3_write_policy](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_policy) | resource |
+| [aws_iam_role.ssm_role](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy_attachment.s3_write_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.ssm_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_subnet.public_subnet](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/subnet) | resource |
 | [null_resource.create_s3_bucket_if_doesnt_exist](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [aws_ami.amazon_linux](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/data-sources/availability_zones) | data source |
+| [aws_ssm_parameter.latest_ami](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/data-sources/ssm_parameter) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | ec2 ebs volume size | `number` | `8` | no |
-| <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | ec2 instance type | `string` | `"t3.small"` | no |
+| <a name="input_ec2_architecture"></a> [ec2\_architecture](#input\_ec2\_architecture) | ec2 instance architecture | `string` | `"x86_64"` | no |
+| <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | ec2 ebs volume size | `number` | `15` | no |
+| <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | ec2 instance type | `string` | `"t3.large"` | no |
 | <a name="input_ec2_spot_instance_enabled"></a> [ec2\_spot\_instance\_enabled](#input\_ec2\_spot\_instance\_enabled) | use ec2 spot instances (cheaper but can be terminated at any time) | `bool` | `false` | no |
 | <a name="input_ec2_spot_instance_price"></a> [ec2\_spot\_instance\_price](#input\_ec2\_spot\_instance\_price) | ec2 spot instance price (adjust this for the instance type if using spot instances) | `string` | `"0.01"` | no |
 | <a name="input_mc_allocated_memory"></a> [mc\_allocated\_memory](#input\_mc\_allocated\_memory) | The amount of memory allocated to the Minecraft server java runtime in MB | `number` | `1024` | no |

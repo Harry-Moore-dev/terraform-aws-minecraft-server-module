@@ -133,8 +133,11 @@ sudo systemctl enable minecraft.service
 sudo systemctl start minecraft.service
 
 # Setup shutdown hook to save the world to s3 before shutting down
-echo '#!/bin/bash\nsudo systemctl stop minecraft.service\n' > shutdown_script.sh
-echo 'aws s3 cp /opt/minecraft/server/worlds s3://${save_bucket_full_path} --recursive --region ${region}\n' >> shutdown_script.sh
-sudo cp shutdown_script.sh /etc/init.d/
-sudo chmod +x /etc/init.d/shutdown_script.sh
-sudo ln -s /etc/init.d/shutdown_script.sh /etc/rc0.d/K01shutdown_script.sh
+echo '#!/bin/bash\nsudo systemctl stop minecraft.service\n' > backup_script.sh
+echo 'aws s3 cp /opt/minecraft/server/worlds s3://${save_bucket_full_path} --recursive --region ${region}\n' >> backup_script.sh
+sudo cp backup_script.sh /etc/init.d/
+sudo chmod +x /etc/init.d/backup_script.sh
+sudo ln -s /etc/init.d/backup_script.sh /etc/rc0.d/K01backup_script.sh
+
+# Add cron job to execute backup_script.sh every half hour
+(crontab -l ; echo "*/30 * * * * /etc/init.d/backup_script.sh") | crontab -

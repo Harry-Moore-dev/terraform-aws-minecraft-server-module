@@ -7,13 +7,23 @@ variable "region" {
 variable "ec2_instance_type" {
   type        = string
   description = "ec2 instance type"
-  default     = "t3.small"
+  default     = "t3.large"
+}
+
+variable "ec2_architecture" {
+  type        = string
+  description = "ec2 instance architecture"
+  default     = "x86_64"
+  validation {
+    condition     = can(regex("x86_64|arm64", var.ec2_architecture))
+    error_message = "ec2_architecture must be either 'x86_64' or 'arm64'"
+  }
 }
 
 variable "ec2_ebs_volume_size" {
   type        = number
   description = "ec2 ebs volume size"
-  default     = 8
+  default     = 15
 }
 
 variable "ec2_spot_instance_price" {
