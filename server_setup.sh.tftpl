@@ -113,19 +113,39 @@ max-world-size=${max_world_size}
 echo "${whitelisted_users}" > whitelist.json
 
 # Create SystemD Script to run Minecraft server jar on reboot and start the server
-echo "#!/bin/bash\njava -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui\n" > start
+echo """
+#!/bin/bash
+java -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui
+""" > start
 chmod +x start
-echo '#!/bin/bash\nkill -9 $(ps -ef | pgrep -f "java")' > stop
+echo '''
+#!/bin/bash
+kill -9 $(ps -ef | pgrep -f "java")
+''' > stop
 chmod +x stop
 cd /etc/systemd/system/
-echo '[Unit]\nDescription=Minecraft Server on start up\nWants=network-online.target\n[Service]\nUser=minecraft\nWorkingDirectory=/opt/minecraft/server\nExecStart=/opt/minecraft/server/start\nStandardInput=null\n[Install]\nWantedBy=multi-user.target' > minecraft.service
+echo '''
+[Unit]
+Description=Minecraft Server on start up
+Wants=network-online.target
+[Service]
+User=minecraft
+WorkingDirectory=/opt/minecraft/server
+ExecStart=/opt/minecraft/server/start
+StandardInput=null
+[Install]
+WantedBy=multi-user.target
+''' > minecraft.service
 sudo systemctl daemon-reload
 sudo systemctl enable minecraft.service
 sudo systemctl start minecraft.service
 
 # Setup shutdown hook to save the world to s3 before shutting down
-echo '#!/bin/bash\nsudo systemctl stop minecraft.service\n' > backup_script.sh
-echo "aws s3 cp /opt/minecraft/server/worlds s3://${save_bucket_full_path} --recursive --region ${region}\n" >> backup_script.sh
+echo '''
+#!/bin/bash
+sudo systemctl stop minecraft.service
+''' > backup_script.sh
+echo "aws s3 cp /opt/minecraft/server/worlds s3://${save_bucket_full_path} --recursive --region ${region}" >> backup_script.sh
 sudo cp backup_script.sh /etc/init.d/
 sudo chmod +x /etc/init.d/backup_script.sh
 sudo ln -s /etc/init.d/backup_script.sh /etc/rc0.d/K01backup_script.sh
