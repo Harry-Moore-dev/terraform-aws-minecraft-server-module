@@ -122,7 +122,7 @@ resource "aws_ssm_document" "save_world_on_shutdown" {
       "action": "aws:runShellScript",
       "name": "save_world",
       "inputs": {
-        "runCommand": [
+        "commands": [
           "systemctl stop minecraft.service",
           "aws s3 cp /opt/minecraft/server/${var.mc_level_name} s3://${var.s3_save_bucket_name}/${var.s3_save_bucket_path} --recursive --region ${var.region}"
         ]
