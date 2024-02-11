@@ -10,6 +10,16 @@ variable "ec2_instance_type" {
   default     = "t3.small"
 }
 
+variable "ec2_architecture" {
+  type        = string
+  description = "ec2 instance architecture"
+  default     = "x86_64"
+  validation {
+    condition     = can(regex("x86_64|arm64", var.ec2_architecture))
+    error_message = "ec2_architecture must be either 'x86_64' or 'arm64'"
+  }
+}
+
 variable "ec2_ebs_volume_size" {
   type        = number
   description = "ec2 ebs volume size"

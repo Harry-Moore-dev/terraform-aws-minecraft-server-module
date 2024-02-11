@@ -26,7 +26,7 @@ module "ec2" {
 
   name = local.name
 
-  ami                         = data.aws_ami.amazon_linux.id
+  ami                         = data.aws_ssm_parameter.latest_ami.value
   instance_type               = var.ec2_instance_type
   subnet_id                   = aws_subnet.public_subnet.id
   availability_zone           = element(local.azs, 2)
@@ -44,7 +44,7 @@ module "ec2" {
     region                = var.region,
     server_port           = var.server_port,
     allocated_memory      = var.mc_allocated_memory,
-    whitelisted_users     = var.mc_whitelisted_users,
+    whitelisted_users     = jsonencode(var.mc_whitelisted_users),
     whitelist_enabled     = var.mc_whitelist_enabled,
     name                  = var.mc_name,
     pvp                   = var.mc_pvp,
@@ -80,6 +80,10 @@ module "ec2" {
   tags = local.tags
 
   iam_instance_profile = "ssm-instance-profile"
+}
+
+data "aws_ssm_parameter" "latest_ami" {
+  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-${var.ec2_architecture}"
 }
 
 resource "aws_iam_instance_profile" "ssm_instance_profile" {
@@ -148,16 +152,6 @@ resource "aws_iam_policy" "s3_write_policy" {
       }
     ]
   })
-}
-
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-2.0.2023.0-*"]
-  }
 }
 
 module "security_group" {
