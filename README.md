@@ -47,14 +47,14 @@ brew install pre-commit terraform-docs tflint tfsec
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.32.1 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 5.36.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.32.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.36.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.2.2 |
 
 ## Modules
@@ -68,16 +68,16 @@ brew install pre-commit terraform-docs tflint tfsec
 
 | Name | Type |
 |------|------|
-| [aws_default_vpc.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_vpc) | resource |
-| [aws_iam_instance_profile.ssm_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
-| [aws_iam_policy.s3_write_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_role.ssm_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy_attachment.s3_write_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.ssm_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_subnet.public_subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_default_vpc.default](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/default_vpc) | resource |
+| [aws_iam_instance_profile.ssm_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_instance_profile) | resource |
+| [aws_iam_policy.s3_write_policy](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_policy) | resource |
+| [aws_iam_role.ssm_role](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy_attachment.s3_write_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.ssm_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_subnet.public_subnet](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/resources/subnet) | resource |
 | [null_resource.create_s3_bucket_if_doesnt_exist](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
-| [aws_ssm_parameter.latest_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/data-sources/availability_zones) | data source |
+| [aws_ssm_parameter.latest_ami](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/data-sources/ssm_parameter) | data source |
 
 ## Inputs
 
