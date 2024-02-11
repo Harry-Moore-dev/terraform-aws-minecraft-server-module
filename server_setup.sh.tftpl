@@ -141,7 +141,7 @@ echo """
 #!/bin/bash
 systemctl stop minecraft.service
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
-""" > shutdown_script.sh
+""" > /opt/minecraft/server/shutdown_script.sh
 chmod +x shutdown_script.sh
 echo '''
 [Unit]
@@ -151,7 +151,7 @@ Requires=network-online.target network.target
 [Service]
 KillMode=mixed
 ExecStart=/bin/true
-ExecStop=/path/to/script/shutdown_script.sh
+ExecStop=/bin/bash /opt/minecraft/server/shutdown_script.sh
 RemainAfterExit=yes
 Type=oneshot
 [Install]
