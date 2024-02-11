@@ -115,7 +115,7 @@ resource "null_resource" "create_s3_bucket_if_doesnt_exist" {
   provisioner "local-exec" {
     command = <<-EOT
       if ! aws s3api head-bucket --bucket ${var.s3_save_bucket_name} --region ${var.region} 2>/dev/null; then
-        aws s3api create-bucket --bucket ${var.s3_save_bucket_name} --acl private --region ${var.region}
+        aws s3api create-bucket --bucket ${var.s3_save_bucket_name} --acl private --region ${var.region} --create-bucket-configuration LocationConstraint=${var.region}
         aws s3api put-bucket-versioning --bucket ${var.s3_save_bucket_name} --versioning-configuration Status=${var.s3_save_bucket_versioning} --region ${var.region}
       fi
     EOT
@@ -142,7 +142,7 @@ resource "aws_iam_policy" "s3_write_policy" {
         Sid      = "S3ReadAccess"
         Effect   = "Allow"
         Action   = ["s3:GetObject", "s3:PutObject"]
-        Resource = ["arn:aws:s3:::${var.s3_save_bucket_path}/*"]
+        Resource = ["arn:aws:s3:::${var.s3_save_bucket_name}/*"]
       },
       {
         Sid      = "S3ListBucketAccess"

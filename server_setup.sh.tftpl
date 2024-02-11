@@ -1,22 +1,18 @@
 #!/bin/bash
 
 # Update package lists
-sudo apt update
-# Pre-installed on Amazon Linux 2023
-#sudo apt install -y java-17-amazon-corretto-headless
-#sudo apt install -y awscli
-sudo apt install -y jq
+sudo yum update
+sudo yum install -y java-17-amazon-corretto-headless
 
 # Change directory to the server folder and setup a minecraft user
 adduser minecraft
 mkdir /opt/minecraft/
 mkdir /opt/minecraft/server/
 cd /opt/minecraft/server
-chown -R minecraft:minecraft /opt/minecraft/
 
 # Copy the saves from s3
-mkdir /opt/minecraft/server/worlds
-aws s3 sync s3://${save_bucket_full_path} /opt/minecraft/server/worlds --region ${region}
+mkdir /opt/minecraft/server/${level_name}
+aws s3 sync s3://${save_bucket_full_path} /opt/minecraft/server/${level_name} --region ${region}
 
 # Download the latest version of the Minecraft server files
 VERSION_MANIFEST_URL="https://launchermeta.mojang.com/mc/game/version_manifest.json"
@@ -109,35 +105,55 @@ resource-pack-sha1=
 max-world-size=${max_world_size}
 """ > server.properties
 
+# Allow the minecraft user to own the server files
+chown -R minecraft:minecraft /opt/minecraft/
+
 # Create whitelist.json file
-echo "[" > whitelist.json
-for uuid in "!${whitelisted_users}[@]"; do
-    name="${whitelisted_users}[$uuid]"
-    echo "  {" >> whitelist.json
-    echo "    \"uuid\": \"$uuid\"," >> whitelist.json
-    echo "    \"name\": \"$name\"" >> whitelist.json
-    echo "  }," >> whitelist.json
-done
-sed -i '$ s/,$//' whitelist.json
-echo "]" >> whitelist.json
+echo "${whitelisted_users}" > whitelist.json
 
 # Create SystemD Script to run Minecraft server jar on reboot and start the server
-echo '#!/bin/bash\njava -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui\n' > start
+echo """
+#!/bin/bash
+java -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui
+""" > start
 chmod +x start
-echo '#!/bin/bash\nkill -9 $(ps -ef | pgrep -f "java")' > stop
+echo '''
+#!/bin/bash
+kill -9 $(ps -ef | pgrep -f "java")
+''' > stop
 chmod +x stop
 cd /etc/systemd/system/
-echo '[Unit]\nDescription=Minecraft Server on start up\nWants=network-online.target\n[Service]\nUser=minecraft\nWorkingDirectory=/opt/minecraft/server\nExecStart=/opt/minecraft/server/start\nStandardInput=null\n[Install]\nWantedBy=multi-user.target' > minecraft.service
+echo '''
+[Unit]
+Description=Minecraft Server on start up
+Wants=network-online.target
+[Service]
+User=minecraft
+WorkingDirectory=/opt/minecraft/server
+ExecStart=/bin/bash /opt/minecraft/server/start
+StandardInput=null
+[Install]
+WantedBy=multi-user.target
+''' > minecraft.service
 sudo systemctl daemon-reload
 sudo systemctl enable minecraft.service
 sudo systemctl start minecraft.service
 
 # Setup shutdown hook to save the world to s3 before shutting down
-echo '#!/bin/bash\nsudo systemctl stop minecraft.service\n' > backup_script.sh
-echo 'aws s3 cp /opt/minecraft/server/worlds s3://${save_bucket_full_path} --recursive --region ${region}\n' >> backup_script.sh
-sudo cp backup_script.sh /etc/init.d/
-sudo chmod +x /etc/init.d/backup_script.sh
-sudo ln -s /etc/init.d/backup_script.sh /etc/rc0.d/K01backup_script.sh
+echo """
+#!/bin/bash
+systemctl stop minecraft.service
+aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
+""" > shutdown_script.sh
+sudo cp shutdown_script.sh /etc/init.d/
+sudo chmod +x /etc/init.d/shutdown_script.sh
+sudo ln -s /etc/init.d/shutdown_script.sh /etc/rc0.d/K01shutdown_script.sh
 
-# Add cron job to execute backup_script.sh every half hour
+# Add cron job to execute backup every half hour
+echo """
+#!/bin/bash
+aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
+""" > backup_script.sh
+sudo cp backup_script.sh /etc/init.d/
+sudo chmod +x /etc/init.d/shutdown_script.sh
 (crontab -l ; echo "*/30 * * * * /etc/init.d/backup_script.sh") | crontab -

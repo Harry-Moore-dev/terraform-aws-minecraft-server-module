@@ -112,11 +112,11 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_mc_spawn_npcs"></a> [mc\_spawn\_npcs](#input\_mc\_spawn\_npcs) | Whether NPCs spawn on the Minecraft server | `bool` | `true` | no |
 | <a name="input_mc_view_distance"></a> [mc\_view\_distance](#input\_mc\_view\_distance) | The view distance for the Minecraft server | `number` | `32` | no |
 | <a name="input_mc_whitelist_enabled"></a> [mc\_whitelist\_enabled](#input\_mc\_whitelist\_enabled) | Whether the whitelist is enabled on the Minecraft server | `bool` | `false` | no |
-| <a name="input_mc_whitelisted_users"></a> [mc\_whitelisted\_users](#input\_mc\_whitelisted\_users) | A map of whitelisted users where the key is the UUID and the value is the username | `map(string)` | `{}` | no |
+| <a name="input_mc_whitelisted_users"></a> [mc\_whitelisted\_users](#input\_mc\_whitelisted\_users) | A map of whitelisted users where the key is the UUID and the value is the username | <pre>list(object({<br>    uuid = string<br>    name = string<br>  }))</pre> | `[]` | no |
 | <a name="input_minecraft_version"></a> [minecraft\_version](#input\_minecraft\_version) | The version of Minecraft Java edition to install, if not specified the latest version will be installed | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region | `string` | `"eu-west-2"` | no |
 | <a name="input_s3_save_bucket_name"></a> [s3\_save\_bucket\_name](#input\_s3\_save\_bucket\_name) | The S3 bucket name to save the Minecraft server data | `string` | n/a | yes |
-| <a name="input_s3_save_bucket_path"></a> [s3\_save\_bucket\_path](#input\_s3\_save\_bucket\_path) | The S3 bucket path to save the Minecraft server data | `string` | `"worlds/"` | no |
+| <a name="input_s3_save_bucket_path"></a> [s3\_save\_bucket\_path](#input\_s3\_save\_bucket\_path) | The S3 bucket path to save the Minecraft server data | `string` | `"world"` | no |
 | <a name="input_s3_save_bucket_versioning"></a> [s3\_save\_bucket\_versioning](#input\_s3\_save\_bucket\_versioning) | Whether to enable versioning on the S3 bucket on first creation | `string` | `"Enabled"` | no |
 | <a name="input_server_port"></a> [server\_port](#input\_server\_port) | The port the server will run on | `number` | `25565` | no |
 | <a name="input_vpc_subnet_cidr_block"></a> [vpc\_subnet\_cidr\_block](#input\_vpc\_subnet\_cidr\_block) | value of the vpc cidr block for the public subnet | `string` | `"172.31.0.0/16"` | no |
