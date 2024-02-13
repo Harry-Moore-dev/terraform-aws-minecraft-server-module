@@ -41,7 +41,7 @@ module "ec2" {
 
   user_data = templatefile("${path.module}/server_setup.sh.tftpl", {
     minecraft_version     = var.minecraft_version,
-    save_bucket_full_path = "${var.s3_save_bucket_name}/${var.s3_save_bucket_path}",
+    save_bucket_full_path = "${var.s3_save_bucket_name}/${var.mc_level_name}",
     region                = var.region,
     server_port           = var.server_port,
     allocated_memory      = var.mc_allocated_memory,
