@@ -33,10 +33,11 @@ module "ec2" {
   vpc_security_group_ids      = [module.security_group.security_group_id]
   associate_public_ip_address = true
 
-  create_spot_instance      = var.ec2_spot_instance_enabled
-  spot_price                = var.ec2_spot_instance_enabled ? var.ec2_spot_instance_price : null
-  spot_type                 = var.ec2_spot_instance_enabled ? "persistent" : null
-  spot_wait_for_fulfillment = var.ec2_spot_instance_enabled ? true : null
+  create_spot_instance                 = var.ec2_spot_instance_enabled
+  spot_price                           = var.ec2_spot_instance_enabled ? var.ec2_spot_instance_price : null
+  spot_type                            = var.ec2_spot_instance_enabled ? "persistent" : null
+  spot_wait_for_fulfillment            = var.ec2_spot_instance_enabled ? true : null
+  instance_initiated_shutdown_behavior = "terminate"
 
   user_data = templatefile("${path.module}/server_setup.sh.tftpl", {
     minecraft_version     = var.minecraft_version,
@@ -108,48 +109,6 @@ resource "aws_iam_role" "ssm_role" {
     ]
 }
 EOF
-}
-
-resource "aws_ssm_document" "save_world_on_shutdown" {
-  name          = "save_world_on_shutdown"
-  document_type = "Command"
-  content       = <<-EOT
-{
-  "schemaVersion": "2.2",
-  "description": "Save the world on shutdown",
-  "mainSteps": [
-    {
-      "action": "aws:runShellScript",
-      "name": "save_world",
-      "inputs": {
-        "runCommand": [
-          "systemctl stop minecraft.service",
-          "aws s3 cp /opt/minecraft/server/${var.mc_level_name} s3://${var.s3_save_bucket_name}/${var.s3_save_bucket_path} --recursive --region ${var.region}"
-        ]
-      }
-    }
-  ]
-}
-EOT
-}
-
-resource "aws_cloudwatch_event_rule" "save_world_on_shutdown" {
-  name        = "save_world_on_shutdown"
-  description = "Save the world on shutdown"
-  event_pattern = jsonencode({
-    source = ["aws.ec2"],
-    detail = {
-      "state" : ["shutting-down"],
-      "instance-id" : [module.ec2.id]
-    },
-    detail_type = ["EC2 Instance State-change Notification"]
-  })
-}
-
-resource "aws_cloudwatch_event_target" "save_world_on_shutdown" {
-  rule      = aws_cloudwatch_event_rule.save_world_on_shutdown.name
-  target_id = "save_world_on_shutdown"
-  arn       = replace(aws_ssm_document.save_world_on_shutdown.arn, "document/", "automation-definition/")
 }
 
 # Note this will create an s3 bucket on first deployment that is not managed inside of state, this will need to be destroyed manually if required or the name is changed
