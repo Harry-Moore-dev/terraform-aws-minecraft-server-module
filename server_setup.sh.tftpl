@@ -139,6 +139,7 @@ WantedBy=multi-user.target
 # Create a SystemD service to save world on shutdown
 echo """
 #!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d '{"content": "Server terminated, saving world!"}' ${webhook_url}
 systemctl stop minecraft.service
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > /opt/minecraft/server/shutdown_script.sh
@@ -161,6 +162,7 @@ WantedBy=multi-user.target
 # Setup backup script to run every 30 minutes
 echo """
 #!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d '{"content": "test"}' ${webhook_url}
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > /opt/minecraft/server/backup_script.sh
 sudo chmod +x /opt/minecraft/server/backup_script.sh
@@ -172,3 +174,5 @@ sudo systemctl enable minecraft.service
 sudo systemctl start minecraft.service
 sudo systemctl enable shutdown.service
 sudo systemctl start shutdown.service
+
+curl -X POST -H "Content-Type: application/json" -d '{"content": "Server Created!"}' ${webhook_url}

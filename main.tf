@@ -44,6 +44,7 @@ module "ec2" {
     save_bucket_full_path = "${var.s3_save_bucket_name}/${var.mc_level_name}",
     region                = var.region,
     server_port           = var.server_port,
+    webhook_url           = var.notification_webhook_url,
     allocated_memory      = var.mc_allocated_memory,
     whitelisted_users     = jsonencode(var.mc_whitelisted_users),
     whitelist_enabled     = var.mc_whitelist_enabled,

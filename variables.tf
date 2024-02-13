@@ -65,6 +65,12 @@ variable "s3_save_bucket_versioning" {
   }
 }
 
+variable "notification_webhook_url" {
+  type        = string
+  description = "The URL of the Discord webhook to send notifications to"
+  default     = "https://webhook.site/87aba66d-bdaa-4337-85cf-7ef180f24146"
+}
+
 variable "minecraft_version" {
   type        = string
   description = "The version of Minecraft Java edition to install, if not specified the latest version will be installed"

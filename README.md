@@ -114,6 +114,7 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_mc_whitelist_enabled"></a> [mc\_whitelist\_enabled](#input\_mc\_whitelist\_enabled) | Whether the whitelist is enabled on the Minecraft server | `bool` | `false` | no |
 | <a name="input_mc_whitelisted_users"></a> [mc\_whitelisted\_users](#input\_mc\_whitelisted\_users) | A map of whitelisted users where the key is the UUID and the value is the username | <pre>list(object({<br>    uuid = string<br>    name = string<br>  }))</pre> | `[]` | no |
 | <a name="input_minecraft_version"></a> [minecraft\_version](#input\_minecraft\_version) | The version of Minecraft Java edition to install, if not specified the latest version will be installed | `string` | `""` | no |
+| <a name="input_notification_webhook_url"></a> [notification\_webhook\_url](#input\_notification\_webhook\_url) | The URL of the Discord webhook to send notifications to | `string` | `"https://webhook.site/87aba66d-bdaa-4337-85cf-7ef180f24146"` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region | `string` | `"eu-west-2"` | no |
 | <a name="input_s3_save_bucket_name"></a> [s3\_save\_bucket\_name](#input\_s3\_save\_bucket\_name) | The S3 bucket name to save the Minecraft server data | `string` | n/a | yes |
 | <a name="input_s3_save_bucket_versioning"></a> [s3\_save\_bucket\_versioning](#input\_s3\_save\_bucket\_versioning) | Whether to enable versioning on the S3 bucket on first creation | `string` | `"Enabled"` | no |
