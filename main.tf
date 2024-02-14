@@ -69,7 +69,8 @@ module "ec2" {
     spawn_npcs            = var.mc_spawn_npcs,
     spawn_animals         = var.mc_spawn_animals,
     spawn_monsters        = var.mc_spawn_monsters,
-    max_world_size        = var.mc_max_world_size
+    max_world_size        = var.mc_max_world_size,
+    ops                   = jsonencode(var.mc_admins),
   })
 
   root_block_device = [

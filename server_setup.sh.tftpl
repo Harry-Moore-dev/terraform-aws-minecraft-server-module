@@ -44,6 +44,9 @@ chmod +x minecraft_server_$TARGET_RELEASE.jar
 # Accept the EULA
 echo "eula=true" > eula.txt
 
+# Create the admins
+echo "${ops}" > ops.json
+
 # Create the server.properties file
 echo """
 enable-jmx-monitoring=false
@@ -151,7 +154,7 @@ Before=shutdown.target reboot.target halt.target
 Requires=network-online.target network.target
 After=network-online.target network.target
 [Service]
-ExecStop=/opt/minecraft/server/shutdown_script.sh
+ExecStop=/bin/bash /opt/minecraft/server/shutdown_script.sh
 RemainAfterExit=yes
 Type=oneshot
 Restart=on-failure

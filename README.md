@@ -88,6 +88,7 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | ec2 instance type | `string` | `"t3.large"` | no |
 | <a name="input_ec2_spot_instance_enabled"></a> [ec2\_spot\_instance\_enabled](#input\_ec2\_spot\_instance\_enabled) | use ec2 spot instances (cheaper but can be terminated at any time) | `bool` | `false` | no |
 | <a name="input_ec2_spot_instance_price"></a> [ec2\_spot\_instance\_price](#input\_ec2\_spot\_instance\_price) | ec2 spot instance price (adjust this for the instance type if using spot instances) | `string` | `"0.01"` | no |
+| <a name="input_mc_admins"></a> [mc\_admins](#input\_mc\_admins) | A map of admins where the key is the UUID and the value is the username | <pre>list(object({<br>    uuid = string<br>    name = string<br>  }))</pre> | `[]` | no |
 | <a name="input_mc_allocated_memory"></a> [mc\_allocated\_memory](#input\_mc\_allocated\_memory) | The amount of memory allocated to the Minecraft server java runtime in MB | `number` | `1024` | no |
 | <a name="input_mc_allow_flight"></a> [mc\_allow\_flight](#input\_mc\_allow\_flight) | Whether flight is allowed on the Minecraft server | `bool` | `false` | no |
 | <a name="input_mc_allow_nether"></a> [mc\_allow\_nether](#input\_mc\_allow\_nether) | Whether the nether is allowed on the Minecraft server | `bool` | `true` | no |

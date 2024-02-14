@@ -229,3 +229,12 @@ variable "mc_max_world_size" {
   description = "The maximum world size for the Minecraft server"
   default     = 29999984
 }
+
+variable "mc_admins" {
+  type = list(object({
+    uuid = string
+    name = string
+  }))
+  description = "A map of admins where the key is the UUID and the value is the username"
+  default     = []
+}
