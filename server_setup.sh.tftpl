@@ -167,7 +167,7 @@ WantedBy=multi-user.target
 # Setup backup script to run every 30 minutes
 echo """
 #!/bin/bash
-curl -X POST -H "Content-Type: application/json" -d '{\"content\": \"Autosaving world ${level_name}\"}' ${webhook_url}
+curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Autosaving world ${level_name}\"}" ${webhook_url}
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > /opt/minecraft/server/backup_script.sh
 sudo chmod +x /opt/minecraft/server/backup_script.sh
