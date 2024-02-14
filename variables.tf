@@ -85,8 +85,10 @@ variable "mc_allocated_memory" {
 
 variable "mc_whitelisted_users" {
   type = list(object({
-    uuid = string
-    name = string
+    uuid                = string
+    name                = string
+    level               = number
+    bypassesPlayerLimit = bool
   }))
   description = "A map of whitelisted users where the key is the UUID and the value is the username"
   default     = []
