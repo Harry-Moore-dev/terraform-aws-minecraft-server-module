@@ -85,10 +85,8 @@ variable "mc_allocated_memory" {
 
 variable "mc_whitelisted_users" {
   type = list(object({
-    uuid                = string
-    name                = string
-    level               = number
-    bypassesPlayerLimit = bool
+    uuid = string
+    name = string
   }))
   description = "A map of whitelisted users where the key is the UUID and the value is the username"
   default     = []
@@ -234,8 +232,10 @@ variable "mc_max_world_size" {
 
 variable "mc_admins" {
   type = list(object({
-    uuid = string
-    name = string
+    uuid                = string
+    name                = string
+    level               = number
+    bypassesPlayerLimit = bool
   }))
   description = "A map of admins where the key is the UUID and the value is the username"
   default     = []

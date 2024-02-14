@@ -88,7 +88,7 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | ec2 instance type | `string` | `"t3.large"` | no |
 | <a name="input_ec2_spot_instance_enabled"></a> [ec2\_spot\_instance\_enabled](#input\_ec2\_spot\_instance\_enabled) | use ec2 spot instances (cheaper but can be terminated at any time) | `bool` | `false` | no |
 | <a name="input_ec2_spot_instance_price"></a> [ec2\_spot\_instance\_price](#input\_ec2\_spot\_instance\_price) | ec2 spot instance price (adjust this for the instance type if using spot instances) | `string` | `"0.01"` | no |
-| <a name="input_mc_admins"></a> [mc\_admins](#input\_mc\_admins) | A map of admins where the key is the UUID and the value is the username | <pre>list(object({<br>    uuid = string<br>    name = string<br>  }))</pre> | `[]` | no |
+| <a name="input_mc_admins"></a> [mc\_admins](#input\_mc\_admins) | A map of admins where the key is the UUID and the value is the username | <pre>list(object({<br>    uuid                = string<br>    name                = string<br>    level               = number<br>    bypassesPlayerLimit = bool<br>  }))</pre> | `[]` | no |
 | <a name="input_mc_allocated_memory"></a> [mc\_allocated\_memory](#input\_mc\_allocated\_memory) | The amount of memory allocated to the Minecraft server java runtime in MB | `number` | `1024` | no |
 | <a name="input_mc_allow_flight"></a> [mc\_allow\_flight](#input\_mc\_allow\_flight) | Whether flight is allowed on the Minecraft server | `bool` | `false` | no |
 | <a name="input_mc_allow_nether"></a> [mc\_allow\_nether](#input\_mc\_allow\_nether) | Whether the nether is allowed on the Minecraft server | `bool` | `true` | no |
@@ -113,7 +113,7 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_mc_spawn_npcs"></a> [mc\_spawn\_npcs](#input\_mc\_spawn\_npcs) | Whether NPCs spawn on the Minecraft server | `bool` | `true` | no |
 | <a name="input_mc_view_distance"></a> [mc\_view\_distance](#input\_mc\_view\_distance) | The view distance for the Minecraft server | `number` | `32` | no |
 | <a name="input_mc_whitelist_enabled"></a> [mc\_whitelist\_enabled](#input\_mc\_whitelist\_enabled) | Whether the whitelist is enabled on the Minecraft server | `bool` | `false` | no |
-| <a name="input_mc_whitelisted_users"></a> [mc\_whitelisted\_users](#input\_mc\_whitelisted\_users) | A map of whitelisted users where the key is the UUID and the value is the username | <pre>list(object({<br>    uuid                = string<br>    name                = string<br>    level               = number<br>    bypassesPlayerLimit = bool<br>  }))</pre> | `[]` | no |
+| <a name="input_mc_whitelisted_users"></a> [mc\_whitelisted\_users](#input\_mc\_whitelisted\_users) | A map of whitelisted users where the key is the UUID and the value is the username | <pre>list(object({<br>    uuid = string<br>    name = string<br>  }))</pre> | `[]` | no |
 | <a name="input_minecraft_version"></a> [minecraft\_version](#input\_minecraft\_version) | The version of Minecraft Java edition to install, if not specified the latest version will be installed | `string` | `""` | no |
 | <a name="input_notification_webhook_url"></a> [notification\_webhook\_url](#input\_notification\_webhook\_url) | The URL of the Discord webhook to send notifications to | `string` | `"https://webhook.site/87aba66d-bdaa-4337-85cf-7ef180f24146"` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region | `string` | `"eu-west-2"` | no |
