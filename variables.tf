@@ -55,12 +55,6 @@ variable "s3_save_bucket_name" {
   description = "The S3 bucket name to save the Minecraft server data"
 }
 
-variable "s3_save_bucket_path" {
-  type        = string
-  description = "The S3 bucket path to save the Minecraft server data"
-  default     = "world"
-}
-
 variable "s3_save_bucket_versioning" {
   type        = string
   description = "Whether to enable versioning on the S3 bucket on first creation"
@@ -69,6 +63,12 @@ variable "s3_save_bucket_versioning" {
     condition     = can(regex("Enabled|Disabled", var.s3_save_bucket_versioning))
     error_message = "s3_save_bucket_versioning must be either 'Enabled' or 'Disabled'"
   }
+}
+
+variable "notification_webhook_url" {
+  type        = string
+  description = "The URL of the Discord webhook to send notifications to"
+  default     = "https://webhook.site/87aba66d-bdaa-4337-85cf-7ef180f24146"
 }
 
 variable "minecraft_version" {
@@ -228,4 +228,15 @@ variable "mc_max_world_size" {
   type        = number
   description = "The maximum world size for the Minecraft server"
   default     = 29999984
+}
+
+variable "mc_admins" {
+  type = list(object({
+    uuid                = string
+    name                = string
+    level               = number
+    bypassesPlayerLimit = bool
+  }))
+  description = "A map of admins where the key is the UUID and the value is the username"
+  default     = []
 }

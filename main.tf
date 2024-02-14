@@ -33,16 +33,18 @@ module "ec2" {
   vpc_security_group_ids      = [module.security_group.security_group_id]
   associate_public_ip_address = true
 
-  create_spot_instance      = var.ec2_spot_instance_enabled
-  spot_price                = var.ec2_spot_instance_enabled ? var.ec2_spot_instance_price : null
-  spot_type                 = var.ec2_spot_instance_enabled ? "persistent" : null
-  spot_wait_for_fulfillment = var.ec2_spot_instance_enabled ? true : null
+  create_spot_instance                 = var.ec2_spot_instance_enabled
+  spot_price                           = var.ec2_spot_instance_enabled ? var.ec2_spot_instance_price : null
+  spot_type                            = var.ec2_spot_instance_enabled ? "persistent" : null
+  spot_wait_for_fulfillment            = var.ec2_spot_instance_enabled ? true : null
+  instance_initiated_shutdown_behavior = "terminate"
 
   user_data = templatefile("${path.module}/server_setup.sh.tftpl", {
     minecraft_version     = var.minecraft_version,
-    save_bucket_full_path = "${var.s3_save_bucket_name}/${var.s3_save_bucket_path}",
+    save_bucket_full_path = "${var.s3_save_bucket_name}/${var.mc_level_name}",
     region                = var.region,
     server_port           = var.server_port,
+    webhook_url           = var.notification_webhook_url,
     allocated_memory      = var.mc_allocated_memory,
     whitelisted_users     = jsonencode(var.mc_whitelisted_users),
     whitelist_enabled     = var.mc_whitelist_enabled,
@@ -67,7 +69,8 @@ module "ec2" {
     spawn_npcs            = var.mc_spawn_npcs,
     spawn_animals         = var.mc_spawn_animals,
     spawn_monsters        = var.mc_spawn_monsters,
-    max_world_size        = var.mc_max_world_size
+    max_world_size        = var.mc_max_world_size,
+    ops                   = jsonencode(var.mc_admins),
   })
 
   root_block_device = [

@@ -44,6 +44,9 @@ chmod +x minecraft_server_$TARGET_RELEASE.jar
 # Accept the EULA
 echo "eula=true" > eula.txt
 
+# Create the admins
+echo "${ops}" > ops.json
+
 # Create the server.properties file
 echo """
 enable-jmx-monitoring=false
@@ -114,9 +117,10 @@ echo "${whitelisted_users}" > whitelist.json
 # Create SystemD Script to run Minecraft server jar on reboot and start the server
 echo """
 #!/bin/bash
-java -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui
+tail -f /opt/minecraft/server/server_input | java -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui
 """ > start
 chmod +x start
+mkfifo /opt/minecraft/server/server_input
 echo '''
 #!/bin/bash
 kill -9 $(ps -ef | pgrep -f "java")
@@ -131,7 +135,7 @@ User=minecraft
 WorkingDirectory=/opt/minecraft/server
 ExecStart=/bin/bash /opt/minecraft/server/start
 ExecStop=/bin/bash /opt/minecraft/server/stop
-StandardInput=null
+StandardInput=/opt/minecraft/server/server_input
 [Install]
 WantedBy=multi-user.target
 ''' > /etc/systemd/system/minecraft.service
@@ -139,6 +143,7 @@ WantedBy=multi-user.target
 # Create a SystemD service to save world on shutdown
 echo """
 #!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d '{\"content\": \"Server terminated, saving world ${level_name}\"}' ${webhook_url}
 systemctl stop minecraft.service
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > /opt/minecraft/server/shutdown_script.sh
@@ -148,12 +153,13 @@ echo '''
 Description=Shutdown Service
 Before=shutdown.target reboot.target halt.target
 Requires=network-online.target network.target
+After=network-online.target network.target
 [Service]
-KillMode=mixed
-ExecStart=/bin/true
 ExecStop=/bin/bash /opt/minecraft/server/shutdown_script.sh
 RemainAfterExit=yes
 Type=oneshot
+Restart=on-failure
+RestartSec=1s
 [Install]
 WantedBy=multi-user.target
 ''' > /etc/systemd/system/shutdown.service
@@ -161,10 +167,20 @@ WantedBy=multi-user.target
 # Setup backup script to run every 30 minutes
 echo """
 #!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Autosaving world ${level_name}\"}" ${webhook_url}
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > /opt/minecraft/server/backup_script.sh
 sudo chmod +x /opt/minecraft/server/backup_script.sh
-echo "*/30 * * * * root /opt/minecraft/server/backup_script.sh" > /etc/cron.d/minecraft-backup
+
+echo """
+[Unit]
+Description=Minecraft Backup Timer
+[Timer]
+OnCalendar=*:0/30
+Persistent=true
+[Install]
+WantedBy=timers.target
+""" > /etc/systemd/system/minecraft_backup.timer
 
 # Start services
 sudo systemctl daemon-reload
@@ -172,3 +188,7 @@ sudo systemctl enable minecraft.service
 sudo systemctl start minecraft.service
 sudo systemctl enable shutdown.service
 sudo systemctl start shutdown.service
+sudo systemctl enable minecraft_backup.timer
+sudo systemctl start minecraft_backup.timer
+server_ip=$(curl http://checkip.amazonaws.com/)
+curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Server Created! IP:$server_ip\"}" ${webhook_url}
