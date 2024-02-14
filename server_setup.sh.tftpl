@@ -117,9 +117,10 @@ echo "${whitelisted_users}" > whitelist.json
 # Create SystemD Script to run Minecraft server jar on reboot and start the server
 echo """
 #!/bin/bash
-java -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui
+tail -f /opt/minecraft/server/server_input | java -Xms${allocated_memory}M -Xmx${allocated_memory}M -jar minecraft_server_$TARGET_RELEASE.jar nogui
 """ > start
 chmod +x start
+mkfifo /opt/minecraft/server/server_input
 echo '''
 #!/bin/bash
 kill -9 $(ps -ef | pgrep -f "java")
@@ -134,7 +135,7 @@ User=minecraft
 WorkingDirectory=/opt/minecraft/server
 ExecStart=/bin/bash /opt/minecraft/server/start
 ExecStop=/bin/bash /opt/minecraft/server/stop
-StandardInput=null
+StandardInput=/opt/minecraft/server/server_input
 [Install]
 WantedBy=multi-user.target
 ''' > /etc/systemd/system/minecraft.service
