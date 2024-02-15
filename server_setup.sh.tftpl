@@ -143,9 +143,10 @@ WantedBy=multi-user.target
 # Create a SystemD service to save world on shutdown
 echo """
 #!/bin/bash
-curl -X POST -H "Content-Type: application/json" -d '{\"content\": \"Server terminated, saving world ${level_name}\"}' ${webhook_url}
+curl -X POST -H \"Content-Type: application/json\" -d '{\"content\": \"Server terminated, saving world ${level_name}\"}' ${webhook_url}
 systemctl stop minecraft.service
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
+curl -X POST -H \"Content-Type: application/json\" -d '{\"content\": \"World ${level_name} saved\"}' ${webhook_url}
 """ > /opt/minecraft/server/shutdown_script.sh
 chmod +x shutdown_script.sh
 echo '''
@@ -167,7 +168,7 @@ WantedBy=multi-user.target
 # Setup backup script to run every 30 minutes
 echo """
 #!/bin/bash
-curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Autosaving world ${level_name}\"}" ${webhook_url}
+curl -X POST -H \"Content-Type: application/json\" -d '{\"content\": \"Autosaving world ${level_name}\"}' ${webhook_url}
 aws s3 cp /opt/minecraft/server/${level_name} s3://${save_bucket_full_path} --recursive --region ${region}
 """ > /opt/minecraft/server/backup_script.sh
 sudo chmod +x /opt/minecraft/server/backup_script.sh
