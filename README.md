@@ -6,7 +6,7 @@ Terraform module to deploy a Minecraft server to AWS. This module is designed to
 Simple example:
 ```hcl
 module "beamMP_server" {
-  source              = "Harry-Moore-dev/terraform-aws-minecraft-server-module/aws"
+  source              = "Harry-Moore-dev/minecraft-server-module/aws"
   version             = "1.0.0"
   s3_save_bucket_name = "some-save-bucket"
 }
@@ -15,7 +15,7 @@ module "beamMP_server" {
 Detailed example:
 ```hcl
 module "beamMP_server" {
-  source              = "Harry-Moore-dev/terraform-aws-minecraft-server-module/aws"
+  source              = "Harry-Moore-dev/minecraft-server-module/aws"
   version             = "1.0.0"
   s3_save_bucket_name = "some-save-bucket"
 
