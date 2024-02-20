@@ -240,3 +240,21 @@ variable "mc_admins" {
   description = "A map of admins where the key is the UUID and the value is the username"
   default     = []
 }
+
+variable "mc_modded" {
+  type        = bool
+  description = "Whether the Minecraft server is modded"
+  default     = false
+}
+
+variable "mc_forge_version" {
+  type        = string
+  description = "The version of Forge to install on the Minecraft server. This should match the version of Minecraft you are using."
+  default     = "1.20.1-47.2.0"
+}
+
+variable "mc_forge_mods" {
+  type        = list(string)
+  description = "A list of mods to install on the Minecraft server"
+  default     = []
+}
