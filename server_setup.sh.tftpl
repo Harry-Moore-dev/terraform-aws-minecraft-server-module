@@ -22,17 +22,19 @@ MANIFEST_JSON=$(curl -s $VERSION_MANIFEST_URL)
 if [ -z ${minecraft_version} ]; then
     TARGET_RELEASE=$(echo $MANIFEST_JSON | jq -r '.latest.release')
 else
-    TARGET_RELEASE=$minecraft_version
+    TARGET_RELEASE=${minecraft_version}
 fi
 
 # Finding the URL for the latest release version
 URL=$(echo $MANIFEST_JSON | jq -r --arg TARGET_RELEASE "$TARGET_RELEASE" '.versions[] | select(.id == $TARGET_RELEASE) | .url')
+echo $URL
 
 # Fetching the JSON for the latest release version
 VERSION_JSON=$(curl -s $URL)
 
 # Extracting the URL for the latest server.jar
 SERVER_JAR_URL=$(echo $VERSION_JSON | jq -r '.downloads.server.url')
+echo $SERVER_JAR_URL
 
 # Downloading the latest server.jar
 echo "Downloading the latest server.jar from: $SERVER_JAR_URL"
@@ -42,8 +44,8 @@ curl -o minecraft_server_$TARGET_RELEASE.jar $SERVER_JAR_URL
 chmod +x minecraft_server_$TARGET_RELEASE.jar
 
 # Install mods
-if [ -n "${modded}"]; then
-    curl -o forge-${forge_version}-installer.jar "https://maven.minecraftforge.net/net/minecraftforge/forge/${forge_version}/forge-${forge_version}-installer.jar"
+if [ "${modded}" = "true" ]; then
+    curl -o forge-${forge_version}-installer.jar https://maven.minecraftforge.net/net/minecraftforge/forge/${forge_version}/forge-${forge_version}-installer.jar
     chmod +x forge-${forge_version}-installer.jar
     java -jar forge-${forge_version}-installer.jar --installServer
     for mod in ${mods}; do
@@ -128,7 +130,7 @@ chown -R minecraft:minecraft /opt/minecraft/
 echo "${whitelisted_users}" > whitelist.json
 
 # Create SystemD Script to run Minecraft server jar on reboot and start the server
-if [ -z ${modded}]; then
+if [ "${modded}" = "true" ]; then
     echo """
     #!/bin/bash
     java -Xms1024M -Xmx${allocated_memory}M -jar forge-${forge_version}.jar nogui
