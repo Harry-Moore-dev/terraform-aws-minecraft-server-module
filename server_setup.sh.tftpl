@@ -50,6 +50,7 @@ if [ "${modded}" = "true" ]; then
     java -jar forge-${forge_version}-installer.jar --installServer
     for mod in ${mods}; do
         MOD_FILE_NAME=$(basename $mod)
+        mod=$(echo $mod | tr -d '[]')
         curl -o $MOD_FILE_NAME $mod
         mv $MOD_FILE_NAME /opt/minecraft/server/mods/
     done
@@ -133,7 +134,7 @@ echo "${whitelisted_users}" > whitelist.json
 if [ "${modded}" = "true" ]; then
     echo """
     #!/bin/bash
-    java -Xms1024M -Xmx${allocated_memory}M -jar forge-${forge_version}.jar nogui
+    run.sh
     """ > start
 else
     echo """
