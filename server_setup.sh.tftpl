@@ -46,9 +46,9 @@ chmod +x minecraft_server_$TARGET_RELEASE.jar
 # Install mods
 if [ "${modded}" = "true" ]; then
     mkdir /opt/minecraft/server/mods/
-    MOD_FILE_NAME=$(basename $modpack)
-    echo "Downloading mod: $modpack"
-    curl -o $MOD_FILE_NAME $modpack
+    MOD_FILE_NAME=$(basename ${modpack})
+    echo "Downloading mod: ${modpack}"
+    curl -o $MOD_FILE_NAME ${modpack}
     unzip $MOD_FILE_NAME -d /opt/minecraft/server/mods/
 fi
 
