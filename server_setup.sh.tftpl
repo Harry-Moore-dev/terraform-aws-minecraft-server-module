@@ -48,11 +48,13 @@ if [ "${modded}" = "true" ]; then
     curl -o forge-${forge_version}-installer.jar https://maven.minecraftforge.net/net/minecraftforge/forge/${forge_version}/forge-${forge_version}-installer.jar
     chmod +x forge-${forge_version}-installer.jar
     java -jar forge-${forge_version}-installer.jar --installServer
+    mkdir /opt/minecraft/server/mods/
     for mod in ${mods}; do
-        MOD_FILE_NAME=$(basename $mod)
         mod=$(echo $mod | tr -d '[]')
+        MOD_FILE_NAME=$(basename $mod)
         echo "Downloading mod: $mod"
         curl -o $MOD_FILE_NAME $mod
+        chmod +x $MOD_FILE_NAME
         mv $MOD_FILE_NAME /opt/minecraft/server/mods/
     done
     rm -f forge-${forge_version}-installer.jar
@@ -135,7 +137,7 @@ echo "${whitelisted_users}" > whitelist.json
 if [ "${modded}" = "true" ]; then
     echo """
     #!/bin/bash
-    run.sh
+    java -Xms1024M -Xmx${allocated_memory}M @libraries/net/minecraftforge/forge/${forge_version}/unix_args.txt \"$@\"
     """ > start
 else
     echo """
