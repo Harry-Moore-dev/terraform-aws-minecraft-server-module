@@ -71,6 +71,9 @@ module "ec2" {
     spawn_monsters        = var.mc_spawn_monsters,
     max_world_size        = var.mc_max_world_size,
     ops                   = jsonencode(var.mc_admins),
+    modded                = var.mc_modded,
+    forge_version         = var.mc_forge_version,
+    mods                  = jsonencode(var.mc_forge_mods),
   })
 
   root_block_device = [

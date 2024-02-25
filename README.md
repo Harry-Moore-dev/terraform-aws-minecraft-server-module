@@ -96,6 +96,8 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_mc_difficulty"></a> [mc\_difficulty](#input\_mc\_difficulty) | The difficulty for the Minecraft server | `string` | `"easy"` | no |
 | <a name="input_mc_enable_command_block"></a> [mc\_enable\_command\_block](#input\_mc\_enable\_command\_block) | Whether command blocks are enabled on the server | `bool` | `false` | no |
 | <a name="input_mc_force_gamemode"></a> [mc\_force\_gamemode](#input\_mc\_force\_gamemode) | Whether to force the game mode on the Minecraft server | `bool` | `false` | no |
+| <a name="input_mc_forge_mods"></a> [mc\_forge\_mods](#input\_mc\_forge\_mods) | A list of mods to install on the Minecraft server | `list(string)` | `[]` | no |
+| <a name="input_mc_forge_version"></a> [mc\_forge\_version](#input\_mc\_forge\_version) | The version of Forge to install on the Minecraft server. This should match the version of Minecraft you are using. | `string` | `"1.20.1-47.2.0"` | no |
 | <a name="input_mc_game_mode"></a> [mc\_game\_mode](#input\_mc\_game\_mode) | The game mode for the Minecraft server | `string` | `"survival"` | no |
 | <a name="input_mc_generate_structures"></a> [mc\_generate\_structures](#input\_mc\_generate\_structures) | Whether structures are generated in the Minecraft server | `bool` | `true` | no |
 | <a name="input_mc_hardcore"></a> [mc\_hardcore](#input\_mc\_hardcore) | Whether hardcore mode is enabled on the Minecraft server | `bool` | `false` | no |
@@ -103,6 +105,7 @@ brew install pre-commit terraform-docs tflint tfsec
 | <a name="input_mc_level_type"></a> [mc\_level\_type](#input\_mc\_level\_type) | The type of level for the Minecraft server (: character must be double escaped with a backslash) | `string` | `"minecraft\\:normal"` | no |
 | <a name="input_mc_max_players"></a> [mc\_max\_players](#input\_mc\_max\_players) | The maximum number of players for the Minecraft server | `number` | `20` | no |
 | <a name="input_mc_max_world_size"></a> [mc\_max\_world\_size](#input\_mc\_max\_world\_size) | The maximum world size for the Minecraft server | `number` | `29999984` | no |
+| <a name="input_mc_modded"></a> [mc\_modded](#input\_mc\_modded) | Whether the Minecraft server is modded | `bool` | `false` | no |
 | <a name="input_mc_name"></a> [mc\_name](#input\_mc\_name) | The name of the Minecraft server | `string` | `"Minecraft Server"` | no |
 | <a name="input_mc_player_idle_timeout"></a> [mc\_player\_idle\_timeout](#input\_mc\_player\_idle\_timeout) | The idle timeout for the Minecraft server (0 to disable) | `number` | `0` | no |
 | <a name="input_mc_pvp"></a> [mc\_pvp](#input\_mc\_pvp) | Whether PVP is enabled on the server | `bool` | `true` | no |
