@@ -247,14 +247,14 @@ variable "mc_modded" {
   default     = false
 }
 
-variable "mc_forge_version" {
+variable "mc_modpack" {
   type        = string
-  description = "The version of Forge to install on the Minecraft server. This should match the version of Minecraft you are using."
-  default     = "1.20.1-47.2.0"
+  description = "The modpack to install on the Minecraft server"
+  default     = ""
 }
 
-variable "mc_forge_mods" {
-  type        = list(string)
-  description = "A list of mods to install on the Minecraft server"
-  default     = []
+variable "mc_modpack_entrypoint" {
+  type        = string
+  description = "The entrypoint jar for the modpack"
+  default     = ""
 }

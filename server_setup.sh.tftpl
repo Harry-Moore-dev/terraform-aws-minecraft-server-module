@@ -45,19 +45,11 @@ chmod +x minecraft_server_$TARGET_RELEASE.jar
 
 # Install mods
 if [ "${modded}" = "true" ]; then
-    curl -o forge-${forge_version}-installer.jar https://maven.minecraftforge.net/net/minecraftforge/forge/${forge_version}/forge-${forge_version}-installer.jar
-    chmod +x forge-${forge_version}-installer.jar
-    java -jar forge-${forge_version}-installer.jar --installServer
     mkdir /opt/minecraft/server/mods/
-    for mod in ${mods}; do
-        mod=$(echo $mod | tr -d '[]')
-        MOD_FILE_NAME=$(basename $mod)
-        echo "Downloading mod: $mod"
-        curl -o $MOD_FILE_NAME $mod
-        chmod +x $MOD_FILE_NAME
-        mv $MOD_FILE_NAME /opt/minecraft/server/mods/
-    done
-    rm -f forge-${forge_version}-installer.jar
+    MOD_FILE_NAME=$(basename $modpack)
+    echo "Downloading mod: $modpack"
+    curl -o $MOD_FILE_NAME $modpack
+    unzip $MOD_FILE_NAME -d /opt/minecraft/server/mods/
 fi
 
 # Accept the EULA
@@ -137,7 +129,7 @@ echo "${whitelisted_users}" > whitelist.json
 if [ "${modded}" = "true" ]; then
     echo """
     #!/bin/bash
-    java -Xms1024M -Xmx${allocated_memory}M @libraries/net/minecraftforge/forge/${forge_version}/unix_args.txt \"$@\"
+    java -Xms1024M -Xmx${allocated_memory}M mods/${modpack_entrypoint}
     """ > start
 else
     echo """
@@ -146,7 +138,6 @@ else
     """ > start
 fi
 chmod +x start
-mkfifo /opt/minecraft/server/server_input
 echo '''
 #!/bin/bash
 kill -9 $(ps -ef | pgrep -f "java")
@@ -161,7 +152,7 @@ User=minecraft
 WorkingDirectory=/opt/minecraft/server
 ExecStart=/bin/bash /opt/minecraft/server/start
 ExecStop=/bin/bash /opt/minecraft/server/stop
-StandardInput=/opt/minecraft/server/server_input
+StandardInput=null
 [Install]
 WantedBy=multi-user.target
 ''' > /etc/systemd/system/minecraft.service

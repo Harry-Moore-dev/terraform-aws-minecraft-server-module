@@ -72,8 +72,8 @@ module "ec2" {
     max_world_size        = var.mc_max_world_size,
     ops                   = jsonencode(var.mc_admins),
     modded                = var.mc_modded,
-    forge_version         = var.mc_forge_version,
-    mods                  = jsonencode(var.mc_forge_mods),
+    modpack               = var.mc_modpack,
+    modpack_entrypoint    = var.mc_modpack_entrypoint,
   })
 
   root_block_device = [
