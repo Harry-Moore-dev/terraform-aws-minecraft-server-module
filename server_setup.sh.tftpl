@@ -51,6 +51,7 @@ if [ "${modded}" = "true" ]; then
     for mod in ${mods}; do
         MOD_FILE_NAME=$(basename $mod)
         mod=$(echo $mod | tr -d '[]')
+        echo "Downloading mod: $mod"
         curl -o $MOD_FILE_NAME $mod
         mv $MOD_FILE_NAME /opt/minecraft/server/mods/
     done
