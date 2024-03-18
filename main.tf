@@ -159,7 +159,7 @@ resource "aws_iam_policy" "s3_write_policy" {
 
 module "security_group" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "5.1.0"
+  version = "5.1.2"
 
   name        = local.name
   description = "BeamMP server security group"
